@@ -2,7 +2,7 @@ module IF_stage (input clk,rst,freeze,Branch_taken,input[31:0] branchAddr,output
 
 wire [31:0] adderOut;
 
-register PC(
+register PC_reg(
     .clk(clk),
     .rst(rst),
     .ld(~freeze),

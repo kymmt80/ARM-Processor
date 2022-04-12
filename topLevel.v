@@ -3,7 +3,7 @@ module topLevel(input clk,rst);
     wire [31:0] PC_if,branchAddr,Instruction_if;
     wire [31:0] PC_id,Instruction_id;
 
-    IF_stage if(
+    IF_stage if_stage(
         .clk(clk),
         .rst(rst),
         .freeze(freeze),
@@ -11,7 +11,7 @@ module topLevel(input clk,rst);
         .branchAddr(branchAddr),
         .PC(PC_if),
         .Instruction(Instruction_if)
-    )
+    );
 
     IF_Stage_Reg ifreg(
         .clk(clk),
@@ -22,7 +22,9 @@ module topLevel(input clk,rst);
         .Instruction_in(instruction_if),
         .PC(PC_id),
         .Instruction(Instruction_id)
-    )
+    );
 
     
+
+
 endmodule

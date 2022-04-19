@@ -5,11 +5,16 @@ module Register_file(
     output [31:0] reg1,reg2
 );
 
-reg [31:0] regFile[0:16];
+reg [31:0] regFile[0:14];
 
 always@(negedge clk,posedge rst)begin
+    if(rst)begin
+        for(i=0;i<15;i=i+1)
+            regFile[i]<=i;
+    end
+
     if(writeBackEn)
-        regFile[Dest_wb]=Result_WB;
+        regFile[Dest_wb]<=Result_WB;
 end
 
 assign reg1=regFile[src1];

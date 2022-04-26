@@ -3,7 +3,7 @@ module topLevel(input clk,rst);
     wire [31:0] PC_if,branchAddr,Instruction_if;
     wire [31:0] PC_id,Instruction_id;
 
-    wire WB_EN_id_out,MEM_R_EN_id_out,MEM_W_EN_id_out,S_id_out,B_id_out,imm_id_out;
+    wire WB_EN_id_out,MEM_R_EN_id_out,MEM_W_EN_id_out,S_id_out,B_id_out,imm_id_out,Two_src_id_out;
     wire[3:0]EXE_CMD_id_out,Dest_id_out,src1_id_out,src2_id_out;
     wire[11:0]Shift_operand_id_out;
     wire[23:0]Signed_imm_24_id_out;
@@ -81,7 +81,7 @@ module topLevel(input clk,rst);
         .Dest(Dest_id_out), 
         .srcl(src1_id_out), 
         .src2(src2_id_out),
-        //.Two_src
+        .Two_src(Two_src_id_out)
     );
 
     ID_Stage_Reg idreg(
@@ -192,7 +192,7 @@ module topLevel(input clk,rst);
 
     //WB______________________________________
 
-    WB_stage(
+    WB_stage wb_stage(
     .ALU_result(ALU_result_wb_in),
     .MEM_result(Mem_read_value_wb_in),
     .MEM_R_en(MEM_R_EN_wb_in),
@@ -201,13 +201,16 @@ module topLevel(input clk,rst);
 
     //Hazard_Detection________________________
 
-    hazard_Detection_unit(
+    hazard_Detection_unit hdu(
         .src1(src1_id_out),
         .src2(src2_id_out),
         .Exe_Dest(Dest_exe_in),
         .Exe_WB_EN(WB_EN_exe_in),
         .Mem_Dest(Dest_mem_in),
         .Mem_WB_EN(WB_EN_mem_in),
+        .Two_src(Two_src_id_out)
         .hazard_Detected(hazard)
     );
+
+    assign freeze=hazard;
 endmodule

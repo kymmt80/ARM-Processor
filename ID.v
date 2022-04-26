@@ -21,6 +21,66 @@ module ID_stage (
     //to hazard detect module 
     output[3:0] srcl, src2,
     output Two_src);
+
+    wire condition_check_out;
+    wire WB_EN_cn_out,MEM_R_EN_cn_out,MEM_W_EN_cn_out,B_cn_out,S_cn_out;
+    wire[3:0]EXE_CMD_cn_out,src2in;
+
+    wire mux1select;
+
+    Control_unit cn(
+        .mode(Instruction[27:26]),
+        .op_code(Instruction[24:21]),
+        .S(Instruction[20]),
+        .Execute_command(EXE_CMD_cn_out),
+        .mem_read(MEM_R_EN_cn_out),
+        .mem_write(MEM_W_EN_cn_out),
+        .WB_enable(WB_EN_cn_out),
+        .B(B_cn_out),
+        .Update_SR(S_cn_out)
+    );
+
+    or r1(mux1select,hazard,~Condition_Check);
+
+    mux2nton #8 mux1(
+        .a({WB_EN_cn_out,MEM_R_EN_cn_out,MEM_W_EN_cn_out,B_cn_out,S_cn_out,EXE_CMD_cn_out}),
+        .b(8'd0),
+        .o({WB_EN,MEM_R_EN,MEM_W_EN,B,S,EXE_CMD}),
+        .s(mux1select)
+    );
+
+    Condition_Check cc(
+        .Cond(Instruction[31:28]),
+        .SR(SR),
+        .check_output(condition_check_out)
+    );
+
+    Register_file rf(
+        .clk(clk),
+        .rst(rst),
+        .src1(Instruction[19:16]),
+        .src2(src2in),
+        .Dest_wb(Dest_wb),
+        .Result_WB(Result_WB),
+        .writeBackEn(writeBackEn),
+        .reg1(val_Rn),
+        .reg2(Val_Rm)
+    );
+
+    assign Dest=Instruction[15:12];
+    assign imm=Instruction[25];
+    assign Signed_imm_24=Instruction[23:0];
+    assign Shift_operand=Instruction[11:0];
+    assign Two_src=(~imm)|MEM_W_EN;
+
+    mux2nton #4 mux2(
+        .a(Instruction[3:0]),
+        .b(Instruction[15:12]),
+        .s(MEM_W_EN),
+        .o(src2in)
+    );
+
+
 endmodule
 
 

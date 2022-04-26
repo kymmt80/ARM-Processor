@@ -12,7 +12,25 @@ module EXE_stage (
     output[31:0]ALU_result,Br_addr,
     output[3:0]status
 );
+parameter [3:0] LDR_STR= 4'b0010
+wire [31:0] Val_2;
 
+always@(Shift_operand, imm, Val_Rm)begin
+    case(imm)
+        1'b1:begin
+            Val_2 = {24'bd0,Shift_operand[7:0]}>>Shift_operand[11:8];
+            Val_2 = {Val_2[23:0],val[31:24]}
+        end
+        1'b0:begin
+        end
+    
+    endcase
+end
+
+ALU alu(
+    .EXE_CMD(EXE_CMD),
+    .Val1(Val_Rn)
+    )
 
 
 endmodule

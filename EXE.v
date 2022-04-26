@@ -12,6 +12,9 @@ module EXE_stage (
     output[31:0]ALU_result,Br_addr,
     output[3:0]status
 );
+
+
+
 endmodule
 
 

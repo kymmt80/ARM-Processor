@@ -192,7 +192,7 @@ module topLevel(input clk,rst);
 
     //WB______________________________________
 
-    WB_stage(
+    WB_stage wb_stage(
     .ALU_result(ALU_result_wb_in),
     .MEM_result(Mem_read_value_wb_in),
     .MEM_R_en(MEM_R_EN_wb_in),
@@ -201,7 +201,7 @@ module topLevel(input clk,rst);
 
     //Hazard_Detection________________________
 
-    hazard_Detection_unit(
+    hazard_Detection_unit hdu(
         .src1(src1_id_out),
         .src2(src2_id_out),
         .Exe_Dest(Dest_exe_in),

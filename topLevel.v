@@ -211,4 +211,6 @@ module topLevel(input clk,rst);
         .Two_src(Two_src_id_out)
         .hazard_Detected(hazard)
     );
+
+    assign freeze=hazard;
 endmodule

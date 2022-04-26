@@ -11,10 +11,10 @@ parameter [1:0]
     COMPUTE=2'b00, MEMORY=2'b01, BRANCH=2'b10;
 always@(op_code,mode)begin
     {Execute_command,mem_read,mem_write,WB_enable,B,Update_SR}=9'b0000_00000;
-    case(mode)begin
-        Update_SR = S;
+    Update_SR = S;
+    case(mode)
         COMPUTE:begin
-            case(op_code)begin
+            case(op_code)
                 MOV:begin
                     Execute_command = 4'b0001;
                     WB_enable = 1'b1;
@@ -53,21 +53,20 @@ always@(op_code,mode)begin
                 TST:begin
                     Execute_command = 4'b0110;
                 end
-                
+	        endcase
         end
 
         MEMORY:begin
-                LDR_STR:begin
-                    Execute_command = 4'b0010;
-                    mem_read = S;
-                    mem_write = ~S;
-                    WB_enable = S;
-                end
+            Execute_command = 4'b0010;
+            mem_read = S;
+            mem_write = ~S;
+            WB_enable = S;
+
         end
 
         BRANCH:begin
            B=1'b1;
         end
-    end
+	endcase
 end
 endmodule

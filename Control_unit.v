@@ -12,16 +12,61 @@ parameter [1:0]
 always@(op_code,mode)begin
     {Execute_command,mem_read,mem_write,WB_enable,B,Update_SR}=9'b0000_00000;
     case(mode)begin
+        Update_SR = S;
         COMPUTE:begin
-            //to complete
+            case(op_code)begin
+                MOV:begin
+                    Execute_command = 4'b0001;
+                    WB_enable = 1'b1;
+                end
+                MVN:begin
+                    Execute_command = 4'b1001;
+                    WB_enable = 1'b1;
+                end
+                ADD:begin
+                    Execute_command = 4'b0010;
+                    WB_enable = 1'b1;
+                end
+                SUB:begin
+                    Execute_command = 4'b0100;
+                    WB_enable = 1'b1;
+                end
+                SBC:begin
+                    Execute_command = 4'b0101;
+                    WB_enable = 1'b1;
+                end
+                AND:begin
+                    Execute_command = 4'b0110;
+                    WB_enable = 1'b1;
+                end
+                ORR:begin
+                    Execute_command = 4'b0111;
+                    WB_enable = 1'b1;
+                end
+                EOR:begin
+                    Execute_command = 4'b1000;
+                    WB_enable = 1'b1;
+                end
+                CMP:begin
+                    Execute_command = 4'b0100;
+                end
+                TST:begin
+                    Execute_command = 4'b0110;
+                end
+                
         end
 
         MEMORY:begin
-            //to complete
+                LDR_STR:begin
+                    Execute_command = 4'b0010;
+                    mem_read = S;
+                    mem_write = ~S;
+                    WB_enable = S;
+                end
         end
 
         BRANCH:begin
-           //to complete 
+           B=1'b1;
         end
     end
 end

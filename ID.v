@@ -12,7 +12,7 @@ module ID_stage (
     input [3:0]SR,
     //to next stage
     output WB_EN,MEM_R_EN,MEM_W_EN,B,S,
-    output[3:0] EXE CMD,
+    output[3:0] EXE_CMD,
     output[31:0] val_Rn, Val_Rm,
     output imm,
     output[11:0] Shift_operand,
@@ -25,7 +25,7 @@ endmodule
 
 
 module ID_Stage_Reg (
-input clk, Ist, flush,
+input clk, rst, flush,
 input WB_EN_IN, MEM_R_EN_IN, MEM_W_EN_IN,
 input B_IN,S_IN, 
 input[3:0] EXE_CMD_IN,

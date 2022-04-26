@@ -5,6 +5,7 @@ module hazard_Detection_unit(
     input Exe_WB_EN,
     input [3:0]Mem_Dest,
     input Mem_WB_EN,
+    input Two_src,
     output hazard_Detected);
 
 endmodule

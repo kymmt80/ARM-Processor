@@ -208,7 +208,7 @@ module topLevel(input clk,rst);
         .Exe_WB_EN(WB_EN_exe_in),
         .Mem_Dest(Dest_mem_in),
         .Mem_WB_EN(WB_EN_mem_in),
-        .Two_src(Two_src_id_out)
+        .Two_src(Two_src_id_out),
         .hazard_Detected(hazard)
     );
 

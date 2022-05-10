@@ -3,6 +3,15 @@ module MEM_stage (
     input[31:0] address,data,
     output [31:0] MEM_result
 );
+
+data_mem dm(
+    .memWrite(MEMwrite),
+    .memRead(MEMread),
+    .Address(address),
+    .writeData(data),
+    .readData(MEM_result)
+);
+
 endmodule
 
 

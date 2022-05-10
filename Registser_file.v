@@ -6,6 +6,7 @@ module Register_file(
 );
 
 reg [31:0] regFile[0:14];
+integer i;
 
 always@(negedge clk,posedge rst)begin
     if(rst)begin

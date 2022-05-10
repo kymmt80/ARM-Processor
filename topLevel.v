@@ -31,7 +31,6 @@ module topLevel(input clk,rst);
 
     wire[3:0]SR_out,SR_in;
 
-    wire
 
     //IF______________________________________
 

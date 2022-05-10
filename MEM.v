@@ -5,6 +5,7 @@ module MEM_stage (
 );
 
 data_mem dm(
+    .clk(clk),
     .memWrite(MEMwrite),
     .memRead(MEMread),
     .Address(address),

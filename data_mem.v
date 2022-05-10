@@ -1,4 +1,4 @@
-module data_mem(input memWrite,memRead,input [31:0]writeData,Address,output reg [31:0]readData);
+module data_mem(input clk,memWrite,memRead,input [31:0]writeData,Address,output reg [31:0]readData);
 reg[31:0] mem[0:65535];
 
 initial begin

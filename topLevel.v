@@ -1,6 +1,6 @@
 module topLevel(input clk,rst);
-    wire freeze, Branch_taken,hazard;
-    wire [31:0] PC_if,branchAddr,Instruction_if;
+    wire freeze,hazard;
+    wire [31:0] PC_if,Instruction_if;
     wire [31:0] PC_id,Instruction_id;
 
     wire WB_EN_id_out,MEM_R_EN_id_out,MEM_W_EN_id_out,S_id_out,B_id_out,imm_id_out,Two_src_id_out;
@@ -34,12 +34,14 @@ module topLevel(input clk,rst);
 
     //IF______________________________________
 
+    assign flush=1'b0;
+
     IF_stage if_stage(
         .clk(clk),
         .rst(rst),
         .freeze(freeze),
-        .Branch_taken(Branch_taken),
-        .branchAddr(branchAddr),
+        .Branch_taken(B_exe_in),
+        .branchAddr(Br_addr_exe_out),
         .PC(PC_if),
         .Instruction(Instruction_if)
     );
@@ -50,7 +52,7 @@ module topLevel(input clk,rst);
         .freeze(freeze),
         .flush(flush),
         .PC_in(PC_if),
-        .Instruction_in(instruction_if),
+        .Instruction_in(Instruction_if),
         .PC(PC_id),
         .Instruction(Instruction_id)
     );
@@ -78,7 +80,7 @@ module topLevel(input clk,rst);
         .Shift_operand(Shift_operand_id_out),
         .Signed_imm_24(Signed_imm_24_id_out),
         .Dest(Dest_id_out), 
-        .srcl(src1_id_out), 
+        .src1(src1_id_out), 
         .src2(src2_id_out),
         .Two_src(Two_src_id_out)
     );
@@ -112,7 +114,7 @@ module topLevel(input clk,rst);
         .Val_Rm(Val_Rm_exe_in), 
         .imm(imm_exe_in), 
         .Shift_operand(Shift_operand_exe_in), 
-        .Signed_imm_24(Shift_operand_exe_in), 
+        .Signed_imm_24(Signed_imm_24_exe_in), 
         .Dest(Dest_exe_in)
     );
 
@@ -212,4 +214,5 @@ module topLevel(input clk,rst);
     );
 
     assign freeze=hazard;
+    // assign hazard=0;
 endmodule

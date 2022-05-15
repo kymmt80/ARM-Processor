@@ -1,12 +1,12 @@
 module IF_stage (input clk,rst,freeze,Branch_taken,input[31:0] branchAddr,output [31:0] PC,Instruction);
 
-wire [31:0] adderOut;
+wire [31:0] adderOut,PC_in;
 
 register PC_reg(
     .clk(clk),
     .rst(rst),
     .ld(~freeze),
-    .Qin(adderOut),
+    .Qin(PC_in),
     .Q(PC)
 );
 
@@ -19,6 +19,13 @@ adder a(
 inst_mem im(
     .Address(PC),
     .inst(Instruction)
+);
+
+mux2nton #32 m(
+    .a(adderOut),
+    .b(branchAddr),
+    .o(PC_in),
+    .s(Branch_taken)
 );
 
 endmodule

@@ -19,7 +19,7 @@ module ID_stage (
     output[23:0] Signed_imm_24,
     output[3:0] Dest, 
     //to hazard detect module 
-    output[3:0] srcl, src2,
+    output[3:0] src1, src2,
     output Two_src);
 
     wire condition_check_out;
@@ -40,11 +40,11 @@ module ID_stage (
         .Update_SR(S_cn_out)
     );
 
-    or r1(mux1select,hazard,~Condition_Check);
+    or r1(mux1select,hazard,~condition_check_out);
 
-    mux2nton #8 mux1(
+    mux2nton #9 mux1(
         .a({WB_EN_cn_out,MEM_R_EN_cn_out,MEM_W_EN_cn_out,B_cn_out,S_cn_out,EXE_CMD_cn_out}),
-        .b(8'd0),
+        .b(9'd0),
         .o({WB_EN,MEM_R_EN,MEM_W_EN,B,S,EXE_CMD}),
         .s(mux1select)
     );
@@ -72,6 +72,8 @@ module ID_stage (
     assign Signed_imm_24=Instruction[23:0];
     assign Shift_operand=Instruction[11:0];
     assign Two_src=(~imm)|MEM_W_EN;
+    assign src1=Instruction[19:16];
+    assign src2=src2in;
 
     mux2nton #4 mux2(
         .a(Instruction[3:0]),
@@ -96,22 +98,22 @@ input[11:0] Shift_operand_IN,
 input[23:0] Signed_imm_24_IN, 
 input[3:0] Dest_IN,
 
-output reg WB_EN, MEM_R_EN, MEM_W_EN, B, S, 
-output reg[3:0] EXE_CMD, 
-output reg[31:0] PC, 
-output reg[31:0] Val_Rn, Val_Rm, 
-output reg imm, 
-output reg[11:0] Shift_operand, 
-output reg[23:0] Signed_imm_24, 
-output reg [3:0] Dest
+output WB_EN, MEM_R_EN, MEM_W_EN, B, S, 
+output[3:0] EXE_CMD, 
+output[31:0] PC, 
+output[31:0] Val_Rn, Val_Rm, 
+output imm, 
+output[11:0] Shift_operand, 
+output[23:0] Signed_imm_24, 
+output [3:0] Dest
 );
 
-register #114 r (
+register #146 r (
     .clk(clk),
     .rst(rst|flush),
     .ld(1'b1),
-    .Qin({WB_EN_IN,MEM_R_EN_IN,MEM_W_EN_IN,B_IN,S_IN,EXE_CMD_IN,PC_IN,Val_Rn_IN,Val_Rm_IN,imm_IN,Shift_operand_IN,Dest_IN}),
-    .Q({WB_EN,MEM_R_EN,MEM_W_EN,B,S,EXE_CMD,PC,Val_Rn,Val_Rm,imm,Shift_operand,Dest})
+    .Qin({WB_EN_IN,MEM_R_EN_IN,MEM_W_EN_IN,B_IN,S_IN,EXE_CMD_IN,PC_IN,Val_Rn_IN,Val_Rm_IN,imm_IN,Shift_operand_IN,Dest_IN,Signed_imm_24_IN}),
+    .Q({WB_EN,MEM_R_EN,MEM_W_EN,B,S,EXE_CMD,PC,Val_Rn,Val_Rm,imm,Shift_operand,Dest,Signed_imm_24})
 );
 
 endmodule

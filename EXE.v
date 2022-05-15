@@ -34,7 +34,7 @@ ALU alu(
 
 adder a(
     .a(PC),
-    .b({8'd0,Signed_imm_24}),
+    .b({{8{Signed_imm_24[23]}},Signed_imm_24}),
     .res(Br_addr)
 );
 
@@ -45,12 +45,12 @@ module EXE_Stage_Reg (
     input clk,rst, WB_en_in, MEM_R_EN_in, MEM_W_EN_in,
     input[31:0] ALU_result_in, ST_val_in,
     input [3:0] Dest_in,
-    output reg WB_en, MEM_R_EN,MEM_W_EN,
-    output reg[31:0] ALU_result, ST_val,
-    output reg[3:0]Dest
+    output WB_en, MEM_R_EN,MEM_W_EN,
+    output[31:0] ALU_result, ST_val,
+    output[3:0]Dest
 );
 
-register #39 r (
+register #71 r (
     .clk(clk),
     .rst(rst),
     .ld(1'b1),

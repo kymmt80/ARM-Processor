@@ -1,4 +1,4 @@
-module topLevel(input clk,rst);
+module topLevel(input clk,rst,mode);//mode : 0 for hazard detection, 1 for forwarding
     wire freeze,hazard;
     wire [31:0] PC_if,Instruction_if;
     wire [31:0] PC_id,Instruction_id;
@@ -10,7 +10,7 @@ module topLevel(input clk,rst);
     wire [31:0] Val_Rm_id_out,Val_Rn_id_out;
 
     wire WB_EN_exe_in,MEM_R_EN_exe_in,MEM_W_EN_exe_in,S_exe_in,B_exe_in,imm_exe_in;
-    wire[3:0]EXE_CMD_exe_in,Dest_exe_in;
+    wire[3:0]EXE_CMD_exe_in,Dest_exe_in,src1_exe_in,src2_exe_in;
     wire[11:0]Shift_operand_exe_in;
     wire[23:0]Signed_imm_24_exe_in;
     wire [31:0] Val_Rm_exe_in,Val_Rn_exe_in,PC_exe_in;
@@ -31,10 +31,11 @@ module topLevel(input clk,rst);
 
     wire[3:0]SR_out,SR_in;
 
+    wire[1:0]sel_src1,sel_src2,sel_src1_raw,sel_src2_raw;
 
     //IF______________________________________
 
-    assign flush=1'b0;
+    assign flush=B_exe_in;
 
     IF_stage if_stage(
         .clk(clk),
@@ -66,7 +67,7 @@ module topLevel(input clk,rst);
         .Result_WB(WB_out),
         .writeBackEn(WB_EN_wb_in),
         .Dest_wb(Dest_wb_in),
-        .hazard(hazard),
+        .hazard(freeze),
         .SR(SR_out),
         .WB_EN(WB_EN_id_out),
         .MEM_R_EN(MEM_R_EN_id_out),
@@ -102,6 +103,8 @@ module topLevel(input clk,rst);
         .Shift_operand_IN(Shift_operand_id_out), 
         .Signed_imm_24_IN(Signed_imm_24_id_out), 
         .Dest_IN(Dest_id_out),
+        .src1_IN(src1_id_out),
+        .src2_IN(src2_id_out),
 
         .WB_EN(WB_EN_exe_in),
         .MEM_R_EN(MEM_R_EN_exe_in),
@@ -115,7 +118,9 @@ module topLevel(input clk,rst);
         .imm(imm_exe_in), 
         .Shift_operand(Shift_operand_exe_in), 
         .Signed_imm_24(Signed_imm_24_exe_in), 
-        .Dest(Dest_exe_in)
+        .Dest(Dest_exe_in),
+        .src1(src1_exe_in),
+        .src2(src2_exe_in)
     );
 
     //STATUS REGISTER_________________________
@@ -142,6 +147,11 @@ module topLevel(input clk,rst);
         .Shift_operand(Shift_operand_exe_in),
         .Signed_imm_24(Signed_imm_24_exe_in),
         .SR(SR_out),
+
+        .sel_src1(sel_src1),
+        .sel_src2(sel_src2),
+        .MEM_ALU_result(ALU_result_mem_in),
+        .WB_wbVal(WB_out),
 
         .ALU_result(ALU_result_exe_out),
         .Br_addr(Br_addr_exe_out),
@@ -213,6 +223,21 @@ module topLevel(input clk,rst);
         .hazard_Detected(hazard)
     );
 
-    assign freeze=hazard;
+    assign freeze= (~mode)&hazard;
+
+    //Forwarding_Unit_________________________
+
+    forwarding_unit fu(
+        .src1(src1_exe_in),
+        .src2(src2_exe_in),
+        .MEM_dest(Dest_mem_in),
+        .MEM_WB_en(WB_EN_mem_in),
+        .WB_dest(Dest_wb_in),
+        .WB_WB_en(WB_EN_wb_in),
+        .sel_src1(sel_src1_raw),
+        .sel_src2(sel_src2_raw)
+    );
+    assign sel_src1=sel_src1_raw&{mode,mode};
+    assign sel_src2=sel_src2_raw&{mode,mode};
     // assign hazard=0;
 endmodule

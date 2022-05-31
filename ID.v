@@ -99,23 +99,33 @@ input[23:0] Signed_imm_24_IN,
 input[3:0] Dest_IN,
 input[3:0] src1_IN,src2_IN,
 
-output WB_EN, MEM_R_EN, MEM_W_EN, B, S, 
-output[3:0] EXE_CMD, 
-output[31:0] PC, 
-output[31:0] Val_Rn, Val_Rm, 
-output imm, 
-output[11:0] Shift_operand, 
-output[23:0] Signed_imm_24, 
-output [3:0] Dest,
-output[3:0]src1,src2
+output reg  WB_EN, MEM_R_EN, MEM_W_EN, B, S, 
+output reg [3:0] EXE_CMD, 
+output reg [31:0] PC, 
+output reg [31:0] Val_Rn, Val_Rm, 
+output reg  imm, 
+output reg [11:0] Shift_operand, 
+output reg [23:0] Signed_imm_24, 
+output reg  [3:0] Dest,
+output reg [3:0]src1,src2
 );
 
-register #154 r (
-    .clk(clk),
-    .rst(rst|flush),
-    .ld(1'b1),
-    .Qin({WB_EN_IN,MEM_R_EN_IN,MEM_W_EN_IN,B_IN,S_IN,EXE_CMD_IN,PC_IN,Val_Rn_IN,Val_Rm_IN,imm_IN,Shift_operand_IN,Dest_IN,Signed_imm_24_IN,src1_IN,src2_IN}),
-    .Q({WB_EN,MEM_R_EN,MEM_W_EN,B,S,EXE_CMD,PC,Val_Rn,Val_Rm,imm,Shift_operand,Dest,Signed_imm_24,src1,src2})
-);
+always @(posedge clk, posedge rst) begin
+    if(rst)
+        {WB_EN,MEM_R_EN,MEM_W_EN,B,S,EXE_CMD,PC,Val_Rn,Val_Rm,imm,Shift_operand,Dest,Signed_imm_24,src1,src2}<=154'd0;
+    else
+        if(flush)
+            {WB_EN,MEM_R_EN,MEM_W_EN,B,S,EXE_CMD,PC,Val_Rn,Val_Rm,imm,Shift_operand,Dest,Signed_imm_24,src1,src2}<=154'd0;
+        else 
+            {WB_EN,MEM_R_EN,MEM_W_EN,B,S,EXE_CMD,PC,Val_Rn,Val_Rm,imm,Shift_operand,Dest,Signed_imm_24,src1,src2}<={WB_EN_IN,MEM_R_EN_IN,MEM_W_EN_IN,B_IN,S_IN,EXE_CMD_IN,PC_IN,Val_Rn_IN,Val_Rm_IN,imm_IN,Shift_operand_IN,Dest_IN,Signed_imm_24_IN,src1_IN,src2_IN};
+end
+
+// register #154 r (
+//     .clk(clk),
+//     .rst(rst|flush),
+//     .ld(1'b1),
+//     .Qin({WB_EN_IN,MEM_R_EN_IN,MEM_W_EN_IN,B_IN,S_IN,EXE_CMD_IN,PC_IN,Val_Rn_IN,Val_Rm_IN,imm_IN,Shift_operand_IN,Dest_IN,Signed_imm_24_IN,src1_IN,src2_IN}),
+//     .Q({WB_EN,MEM_R_EN,MEM_W_EN,B,S,EXE_CMD,PC,Val_Rn,Val_Rm,imm,Shift_operand,Dest,Signed_imm_24,src1,src2})
+// );
 
 endmodule

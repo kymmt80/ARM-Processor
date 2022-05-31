@@ -13,9 +13,10 @@ always@(negedge clk,posedge rst)begin
         for(i=0;i<15;i=i+1)
             regFile[i]<=i;
     end
-
-    if(writeBackEn)
-        regFile[Dest_wb]<=Result_WB;
+	else begin
+        if(writeBackEn)
+            regFile[Dest_wb]<=Result_WB;
+	end
 end
 
 assign reg1=regFile[src1];

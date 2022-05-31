@@ -45,7 +45,7 @@
 //   V1.5 :| Eko    Yan        :| 12/01/30  :|      Update to version 11.1 sp1.
 // ============================================================================
 
-module arm
+module ARM
 	(
 		////////////////////	Clock Input	 	////////////////////	 
 		CLOCK_27,						//	27 MHz
@@ -302,10 +302,10 @@ input          TD_CLK27;            //	TV Decoder 27MHz CLK
 inout	[35:0]	GPIO_0;					//	GPIO Connection 0
 inout	[35:0]	GPIO_1;					//	GPIO Connection 1
 
-endmodule
-
 topLevel tl(
     .clk(CLOCK_50),
     .rst(SW[0]),
     .mode(SW[1])    
 );
+
+endmodule

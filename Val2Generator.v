@@ -4,7 +4,7 @@ module Val2Generator(
     input [31:0]Val_Rm,
     output reg[31:0]Val_2);
 
-always@(Shift_operand, imm, Val_Rm)begin
+always@(Shift_operand, imm, Val_Rm, MEM_CMD)begin
     if(MEM_CMD==1'b1)
         Val_2 = Shift_operand;
     else begin

@@ -5,12 +5,12 @@ module Register_file(
     output [31:0] reg1,reg2
 );
 
-reg [31:0] regFile[0:14];
+reg [31:0] regFile[0:15];
 integer i;
 
 always@(negedge clk,posedge rst)begin
     if(rst)begin
-        for(i=0;i<15;i=i+1)
+        for(i=0;i<16;i=i+1)
             regFile[i]<=i;
     end
 	else begin

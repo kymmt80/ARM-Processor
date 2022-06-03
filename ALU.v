@@ -27,7 +27,7 @@ end
 
 always@(ALU_res)begin
     status=4'd0;
-    status[0] = (ALU_res[31]&~Val1[31]&~Val2[31])|(~ALU_res[31]&Val1[31]&Val2[31]);
+    status[0] = ((EXE_CMD==4'd2|EXE_CMD==4'd3)&((ALU_res[31]&~Val1[31]&~Val2[31])|(~ALU_res[31]&Val1[31]&Val2[31])))|((EXE_CMD==4'd4|EXE_CMD==4'd5)&((ALU_res[31]&~Val1[31]&Val2[31])|(~ALU_res[31]&Val1[31]&~Val2[31])));
     status[1] = carry1;
     status[2] = ~(|ALU_res);
     status[3] = ALU_res[31];

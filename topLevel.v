@@ -13,7 +13,7 @@ module topLevel(input clk,rst,mode);//mode : 0 for hazard detection, 1 for forwa
     wire[3:0]EXE_CMD_exe_in,Dest_exe_in,src1_exe_in,src2_exe_in;
     wire[11:0]Shift_operand_exe_in;
     wire[23:0]Signed_imm_24_exe_in;
-    wire [31:0] Val_Rm_exe_in,Val_Rn_exe_in,PC_exe_in;
+    wire [31:0] Val_Rm_exe_in,Val_Rm_exe_out,Val_Rn_exe_in,PC_exe_in;
 
     wire [31:0]ALU_result_exe_out,Br_addr_exe_out;
 
@@ -126,7 +126,7 @@ module topLevel(input clk,rst,mode);//mode : 0 for hazard detection, 1 for forwa
     //STATUS REGISTER_________________________
 
     register #4 SR(
-        .clk(clk),
+        .clk(~clk),
         .rst(rst),
         .ld(S_exe_in),
         .Qin(SR_in),
@@ -155,6 +155,7 @@ module topLevel(input clk,rst,mode);//mode : 0 for hazard detection, 1 for forwa
 
         .ALU_result(ALU_result_exe_out),
         .Br_addr(Br_addr_exe_out),
+        .Val_Rm_out(Val_Rm_exe_out),
         .status(SR_in)
     );
 
@@ -165,7 +166,7 @@ module topLevel(input clk,rst,mode);//mode : 0 for hazard detection, 1 for forwa
         .MEM_R_EN_in(MEM_R_EN_exe_in),
         .MEM_W_EN_in(MEM_W_EN_exe_in),
         .ALU_result_in(ALU_result_exe_out),
-        .ST_val_in(Val_Rm_exe_in),
+        .ST_val_in(Val_Rm_exe_out),
         .Dest_in(Dest_exe_in),
         .WB_en(WB_EN_mem_in),
         .MEM_R_EN(MEM_R_EN_mem_in),
@@ -217,13 +218,15 @@ module topLevel(input clk,rst,mode);//mode : 0 for hazard detection, 1 for forwa
         .src2(src2_id_out),
         .Exe_Dest(Dest_exe_in),
         .Exe_WB_EN(WB_EN_exe_in),
+        .Exe_MEM_R_EN(MEM_R_EN_exe_in),
         .Mem_Dest(Dest_mem_in),
         .Mem_WB_EN(WB_EN_mem_in),
         .Two_src(Two_src_id_out),
+        .mode(mode),
         .hazard_Detected(hazard)
     );
 
-    assign freeze= (~mode)&hazard;
+    assign freeze= hazard;
 
     //Forwarding_Unit_________________________
 

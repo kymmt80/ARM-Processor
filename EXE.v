@@ -13,7 +13,7 @@ module EXE_stage (
     input[1:0]sel_src1,sel_src2,
     input[31:0]MEM_ALU_result, WB_wbVal,
 
-    output[31:0]ALU_result,Br_addr,
+    output[31:0]ALU_result,Br_addr,Val_Rm_out,
     output[3:0]status
 );
 
@@ -37,6 +37,7 @@ mux4nton mux2(
     .s(sel_src2),
     .o(src2)
 );
+assign Val_Rm_out=src2;
 
 Val2Generator v2g(
     .MEM_CMD(MEM_R_EN|MEM_W_EN),
@@ -57,7 +58,7 @@ ALU alu(
 
 adder a(
     .a(PC),
-    .b({{8{Signed_imm_24[23]}},Signed_imm_24}),
+    .b({{6{Signed_imm_24[23]}},Signed_imm_24,2'b00}),
     .res(Br_addr)
 );
 

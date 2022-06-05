@@ -66,7 +66,7 @@ endmodule
 
 
 module EXE_Stage_Reg (
-    input clk,rst, WB_en_in, MEM_R_EN_in, MEM_W_EN_in,
+    input clk,rst,freeze, WB_en_in, MEM_R_EN_in, MEM_W_EN_in,
     input[31:0] ALU_result_in, ST_val_in,
     input [3:0] Dest_in,
     output WB_en, MEM_R_EN,MEM_W_EN,
@@ -77,7 +77,7 @@ module EXE_Stage_Reg (
 register #71 r (
     .clk(clk),
     .rst(rst),
-    .ld(1'b1),
+    .ld(~freeze),
     .Qin({WB_en_in,MEM_R_EN_in,MEM_W_EN_in,ALU_result_in,ST_val_in,Dest_in}),
     .Q({WB_en,MEM_R_EN,MEM_W_EN,ALU_result,ST_val,Dest})
 );

@@ -305,7 +305,15 @@ inout	[35:0]	GPIO_1;					//	GPIO Connection 1
 topLevel tl(
     .clk(CLOCK_50),
     .rst(SW[0]),
-    .mode(SW[1])    
+    .mode(SW[1]),
+    .SRAM_DQ(SRAM_DQ),
+    .SRAM_ADDR(SRAM_ADDR),
+    .SRAM_UB_EN(SRAM_UB_N),
+    .SRAM_LB_EN(SRAM_LB_N),
+    .SRAM_WE_EN(SRAM_WE_N),
+    .SRAM_CE_EN(SRAM_CE_N),
+    .SRAM_OE_EN(SRAM_OE_N)
+        
 );
 
 endmodule

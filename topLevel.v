@@ -1,4 +1,13 @@
-module topLevel(input clk,rst,mode);//mode : 0 for hazard detection, 1 for forwarding
+module topLevel(
+    input clk,rst,mode,//mode : 0 for hazard detection, 1 for forwarding
+    inout [15:0]SRAM_DQ,
+    output [17:0]SRAM_ADDR,
+    output SRAM_LB_EN,
+    output SRAM_UB_EN,
+    output SRAM_WE_EN,
+    output SRAM_CE_EN,
+    output SRAM_OE_EN);
+
     wire freeze,hazard;
     wire [31:0] PC_if,Instruction_if;
     wire [31:0] PC_id,Instruction_id;
@@ -33,14 +42,16 @@ module topLevel(input clk,rst,mode);//mode : 0 for hazard detection, 1 for forwa
 
     wire[1:0]sel_src1,sel_src2,sel_src1_raw,sel_src2_raw;
 
+    wire ready;
+
     //IF______________________________________
 
-    assign flush=B_exe_in;
+    assign flush=B_exe_in&ready;
 
     IF_stage if_stage(
         .clk(clk),
         .rst(rst),
-        .freeze(freeze),
+        .freeze(freeze|(~ready)),
         .Branch_taken(B_exe_in),
         .branchAddr(Br_addr_exe_out),
         .PC(PC_if),
@@ -50,7 +61,7 @@ module topLevel(input clk,rst,mode);//mode : 0 for hazard detection, 1 for forwa
     IF_Stage_Reg ifreg(
         .clk(clk),
         .rst(rst),
-        .freeze(freeze),
+        .freeze(freeze|(~ready)),
         .flush(flush),
         .PC_in(PC_if),
         .Instruction_in(Instruction_if),
@@ -90,6 +101,7 @@ module topLevel(input clk,rst,mode);//mode : 0 for hazard detection, 1 for forwa
         .clk(clk),
         .rst(rst),
         .flush(flush),
+        .freeze(~ready),
         .WB_EN_IN(WB_EN_id_out),
         .MEM_R_EN_IN(MEM_R_EN_id_out),
         .MEM_W_EN_IN(MEM_W_EN_id_out),
@@ -162,6 +174,7 @@ module topLevel(input clk,rst,mode);//mode : 0 for hazard detection, 1 for forwa
     EXE_Stage_Reg exereg(
         .clk(clk),
         .rst(rst),
+        .freeze(~ready),
         .WB_en_in(WB_EN_exe_in),
         .MEM_R_EN_in(MEM_R_EN_exe_in),
         .MEM_W_EN_in(MEM_W_EN_exe_in),
@@ -180,17 +193,27 @@ module topLevel(input clk,rst,mode);//mode : 0 for hazard detection, 1 for forwa
 
     MEM_stage mem_stage(
         .clk(clk),
+        .rst(rst),
         .MEMread(MEM_R_EN_mem_in),
         .MEMwrite(MEM_W_EN_mem_in),
         .address(ALU_result_mem_in),
         .data(Val_Rm_mem_in),
-        .MEM_result(Mem_read_value_mem_out)
+        .MEM_result(Mem_read_value_mem_out),
+        .ready(ready),
+        .SRAM_DQ(SRAM_DQ),
+        .SRAM_ADDR(SRAM_ADDR),
+        .SRAM_UB_EN(SRAM_UB_EN),
+        .SRAM_LB_EN(SRAM_LB_EN),
+        .SRAM_WE_EN(SRAM_WE_EN),
+        .SRAM_CE_EN(SRAM_CE_EN),
+        .SRAM_OE_EN(SRAM_OE_EN)
     );
 
     MEM_Stage_Reg memreg(
         .clk(clk),
         .rst(rst),
-        .WB_en_in(WB_EN_mem_in),
+        .freeze(~ready),
+        .WB_en_in(WB_EN_mem_in&ready),
         .MEM_R_en_in(MEM_R_EN_mem_in),
         .ALU_result_in(ALU_result_mem_in),
         .Mem_read_value_in(Mem_read_value_mem_out),

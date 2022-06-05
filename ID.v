@@ -87,7 +87,7 @@ endmodule
 
 
 module ID_Stage_Reg (
-input clk, rst, flush,
+input clk, rst, flush,freeze,
 input WB_EN_IN, MEM_R_EN_IN, MEM_W_EN_IN,
 input B_IN,S_IN, 
 input[3:0] EXE_CMD_IN,
@@ -116,7 +116,7 @@ always @(posedge clk, posedge rst) begin
     else
         if(flush)
             {WB_EN,MEM_R_EN,MEM_W_EN,B,S,EXE_CMD,PC,Val_Rn,Val_Rm,imm,Shift_operand,Dest,Signed_imm_24,src1,src2}<=154'd0;
-        else 
+        else if(!freeze) 
             {WB_EN,MEM_R_EN,MEM_W_EN,B,S,EXE_CMD,PC,Val_Rn,Val_Rm,imm,Shift_operand,Dest,Signed_imm_24,src1,src2}<={WB_EN_IN,MEM_R_EN_IN,MEM_W_EN_IN,B_IN,S_IN,EXE_CMD_IN,PC_IN,Val_Rn_IN,Val_Rm_IN,imm_IN,Shift_operand_IN,Dest_IN,Signed_imm_24_IN,src1_IN,src2_IN};
 end
 

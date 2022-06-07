@@ -7,7 +7,7 @@ module SRAM_controller(
     input[31:0]address,
     input [31:0]write_Data,
     //to next stage
-    output[31:0] ReadData,
+    output[63:0] ReadData,
     //to freeze other stages
     output reg ready,
 
@@ -22,7 +22,7 @@ module SRAM_controller(
     reg [2:0] ps, ns;
     reg [17:0]addr;
     reg [15:0]writeDataOut;
-    reg [31:0]rawReadData;
+    reg [63:0]rawReadData;
 
     assign SRAM_DQ=(SRAM_WE_EN==0)?writeDataOut:16'bzzzzzzzzzzzzzzzz;
     assign SRAM_ADDR=addr;
@@ -46,9 +46,9 @@ module SRAM_controller(
         {SRAM_WE_EN,SRAM_UB_EN,SRAM_LB_EN,SRAM_CE_EN,SRAM_OE_EN,ready}=6'b100000;
         if(wr_en)
             case(ps)
-            3'b000: begin
-                ready=~(wr_en|rd_en);
-            end
+            //3'b000: begin
+                //ready=~(wr_en|rd_en);
+            //end
             3'b001: begin
                 writeDataOut=write_Data[15:0];
                 addr=((address>>2)<<2)-32'd1024;
@@ -65,27 +65,33 @@ module SRAM_controller(
             endcase
         else if(rd_en)
             case(ps)
-            3'b000: begin
-                ready=~(wr_en|rd_en);
-            end
+            //3'b000: begin
+                //ready=~(wr_en|rd_en);
+            //end
             3'b001: begin
-                addr=((address>>2)<<2)-32'd1024;
+                addr=((address>>3)<<3)-32'd1024;
             end
             3'b010: begin
                 rawReadData[15:0]=SRAM_DQ;
-                addr=(((address>>2)<<2)-32'd1024)+2;
+                addr=(((address>>3)<<3)-32'd1024)+2;
             end
             3'b011: begin
                 rawReadData[31:16]=SRAM_DQ;
+                addr=(((address>>3)<<3)-32'd1024)+4;
+            end
+            3'b100:begin
+                rawReadData[47:32]=SRAM_DQ;
+                addr=(((address>>3)<<3)-32'd1024)+6;
             end
             3'b101: begin
+                rawReadData[63:48]=SRAM_DQ;
                 ready=1'b1;
             end
             endcase
         else
             case(ps)
             3'b000: begin
-                ready=~(wr_en|rd_en);
+                ready=1'b0;
             end
             endcase
     end

@@ -10,10 +10,13 @@ module cache(
     wire [5:0] index;
     wire [2:0] offset;
 
-    assign {tag, index, offset} = address;
+    wire [63:0] raw_read_data;
 
-    reg [63:0] data_0 [0:1][0:63];
-    reg [63:0] data_1 [0:1][0:63];
+    assign {tag, index, offset} = address;
+    assign read_data=(offset[2])?raw_read_data[63:32]:raw_read_data[31:0];
+
+    reg [63:0] data_0 [0:63];
+    reg [63:0] data_1 [0:63];
 
     reg [9:0] tag_0 [0:63];
     reg [9:0] tag_1 [0:63];
@@ -40,7 +43,7 @@ module cache(
         .a(data_0[index]),
         .b(data_1[index]),
         .s(~hit_0),
-        .o(read_data)
+        .o(raw_read_data)
     );
 
     assign hit = hit_0 | hit_1;
@@ -67,15 +70,13 @@ module cache(
     always @(posedge clk) begin
         if (cache_write) begin
             if (lru[index]==0) begin
-                data_1[1][index] <= write_data[63:32];
-                data_1[0][index] <= write_data[31:0];
+                data_1[index] <= write_data;
                 tag_1[index] <= tag;
                 valid_1[index] <= 1'b1;
             end
       
             else if (lru[index]==1) begin
-                data_0[1][index] <= write_data[63:32];
-                data_0[0][index] <= write_data[31:0];
+                data_0[index] <= write_data;
                 tag_0[index] <= tag;
                 valid_0[index] <= 1'b1;
             end

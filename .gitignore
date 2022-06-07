@@ -7,3 +7,6 @@ version*/*
 .gitignore
 CAlab1/
 quartus/*
+*.bak
+*.zip
+output_files/*

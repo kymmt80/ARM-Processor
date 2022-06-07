@@ -20,15 +20,57 @@ module MEM_stage (
 //     .readData(MEM_result)
 // );
 
+// SRAM_controller sc(
+//     .clk(clk),
+//     .rst(rst),
+//     .wr_en(MEMwrite),
+//     .rd_en(MEMread),
+//     .address(address),
+//     .write_Data(data),
+//     .ReadData(MEM_result),
+//     .ready(ready),
+
+//     .SRAM_DQ(SRAM_DQ),
+//     .SRAM_ADDR(SRAM_ADDR),
+//     .SRAM_UB_EN(SRAM_UB_EN),
+//     .SRAM_LB_EN(SRAM_LB_EN),
+//     .SRAM_WE_EN(SRAM_WE_EN),
+//     .SRAM_CE_EN(SRAM_CE_EN),
+//     .SRAM_OE_EN(SRAM_OE_EN)
+//     );
+
+wire [31:0]SRAM_addr,SRAM_wdata;
+wire [63:0] SRAM_rdata;
+wire SRAM_ready,SRAM_W_EN,SRAM_R_EN;
+
+cache_controller cc(
+    .clk(clk),
+    .rst(rst),
+
+    .address(address),
+    .wdata(data),
+    .MEM_R_EN(MEMread),
+    .MEM_W_EN(MEMwrite),
+    .rdata(MEM_result),
+    .ready(ready),
+
+    .sram_address(SRAM_addr),
+    .sram_wdata(SRAM_wdata),
+    .write(SRAM_W_EN),
+    .read(SRAM_R_EN),
+    .sram_rdata(SRAM_rdata),
+    .sram_ready(SRAM_ready)
+);
+
 SRAM_controller sc(
     .clk(clk),
     .rst(rst),
-    .wr_en(MEMwrite),
-    .rd_en(MEMread),
-    .address(address),
-    .write_Data(data),
-    .ReadData(MEM_result),
-    .ready(ready),
+    .wr_en(SRAM_W_EN),
+    .rd_en(SRAM_R_EN),
+    .address(SRAM_addr),
+    .write_Data(SRAM_wdata),
+    .ReadData(SRAM_rdata),
+    .ready(SRAM_ready),
 
     .SRAM_DQ(SRAM_DQ),
     .SRAM_ADDR(SRAM_ADDR),
@@ -38,7 +80,6 @@ SRAM_controller sc(
     .SRAM_CE_EN(SRAM_CE_EN),
     .SRAM_OE_EN(SRAM_OE_EN)
     );
-
 
 endmodule
 
